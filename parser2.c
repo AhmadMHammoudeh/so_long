@@ -6,7 +6,7 @@
 /*   By: ahhammou <ahhammou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/03 04:28:34 by ahhammou          #+#    #+#             */
-/*   Updated: 2021/11/03 09:45:50 by ahhammou         ###   ########.fr       */
+/*   Updated: 2021/11/03 13:02:54 by ahhammou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,78 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <errno.h>
+#include <string.h>
 #include "get_next_line.c"
 
-int ft_checker_len(char **arr)
+typedef struct s_data {
+	int	l;
+	int	o;
+	int	col;
+	int	e;
+	int	p;
+	char **arr;
+} t_data;
+
+void	ft_initalize(t_data *flags)
 {
-	int i;
-	int j;
+	flags->l = 0;
+	flags->o = 0;
+	flags->col = 0;
+	flags->e = 0;
+	flags->p = 0;
+}
+
+int	ft_check_wall_enemy_food(char c, t_data *flags)
+{
+	if (c == 'C')
+		flags->col += 1;
+	else if (c == 'E')
+		flags->e += 1;
+	else if (c == 'P')
+		flags->p += 1;
+	else if (c == '1')
+		flags->l += 1;
+	else if (c == '0')
+		flags->o += 1;
+	else if(c != '\n')
+		return (0);
+	return (1);
+}
+
+int	ft_checker_flag(char **arr, t_data *flags)
+{
+	int	i;
+	int	j;
+	int	x;
 
 	i = 0;
 	while (arr[i])
 	{
-	j = ft_strlen(arr[0]);
+		j = 0;
+		while (arr[i][j])
+		{
+			x = ft_check_wall_enemy_food(arr[i][j], flags);
+			if (x != 1)
+				return (0);
+			j++;
+		}
+		i++;
+	}
+	if (flags->col < 1 || flags->p < 1 || flags->e < 1)
+		return (0);
+	return (1);
+}
+
+int	ft_checker_len(char **arr)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	while (arr[i])
+	{
+		j = ft_strlen(arr[0]);
 		if (ft_strlen(arr[i]) != j)
 			return (0);
 		i++;
@@ -32,9 +93,9 @@ int ft_checker_len(char **arr)
 	return (10);
 }
 
-int ft_borderland(char **arr, int j)
+int	ft_borderland(char **arr, int j)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (arr[i])
@@ -59,11 +120,11 @@ int ft_borderland(char **arr, int j)
 	return (1);
 }
 
-int ft_checker_wall(char **arr)
+int	ft_checker_wall(char **arr)
 {
-	int i;
-	int j;
-	int p;
+	int	i;
+	int	j;
+	int	p;
 
 	i = 0;
 	p = 0;
@@ -75,7 +136,7 @@ int ft_checker_wall(char **arr)
 			if (arr[i][j] != '1')
 			{
 				if (arr[i][j] == '\n')
-					break;
+					break ;
 				else
 					return (0);
 			}
@@ -90,7 +151,7 @@ int ft_checker_wall(char **arr)
 		if (arr[i][j] != '1')
 		{
 			if (arr[i][j] == '\n')
-				break;
+				break ;
 			else
 				return (0);
 		}
@@ -104,26 +165,42 @@ int ft_checker_wall(char **arr)
 
 int	the_parse(int fd)
 {
-	char **arr;
-	int i;
-	int z;
+	int		i;
+	int		z;
+	t_data	flags;
 
 	i = 0;
 	z = 0;
-	arr = malloc(sizeof(char *)*11);
+	ft_initalize(&flags);
+	flags.arr = malloc(sizeof(char *) * 11);
 	while (z == 0)
 	{
-		arr[i] = get_next_line(fd, z);
-		if (!arr[i])
-			break;
+		flags.arr[i] = get_next_line(fd, z);
+		if (!flags.arr[i])
+			break ;
 		i++;
 	}
-	z = ft_checker_len(arr);
+	z = ft_checker_len(flags.arr);
 	if (z == 0)
+	{
+		strerror(errno);
+		// perror("Error\n");
 		return (0);
-	z = ft_checker_wall(arr);
+	}
+	z = ft_checker_wall(flags.arr);
 	if (z == 0)
+	{
+		strerror(errno);
+		// perror("Error\n");
 		return (0);
+	}
+	z = ft_checker_flag(flags.arr, &flags);
+	if (z == 0)
+	{
+		strerror(2);
+		perror("Error\n");
+		return (0);
+	}
 	return (1);
 }
 
@@ -131,6 +208,6 @@ int main ()
 {
 	int fd;
 
-	fd = open("/Users/ahhammou/Cursus/So_Long/test.ber", O_RDONLY);
-	printf("%d", the_parse(fd));
+	fd = open("test.ber", O_RDONLY);
+	the_parse(fd);
 }
