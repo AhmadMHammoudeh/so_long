@@ -6,13 +6,11 @@
 /*   By: ahhammou <ahhammou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/19 11:31:05 by ahhammou          #+#    #+#             */
-/*   Updated: 2021/11/03 07:22:33 by ahhammou         ###   ########.fr       */
+/*   Updated: 2021/11/15 09:00:54 by ahhammou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include "get_next_line_utils.c"
-
 
 char	*ft_w16(char *s, int fd)
 {
@@ -26,7 +24,7 @@ char	*ft_w16(char *s, int fd)
 		return (NULL);
 	}
 	size = 1337;
-	while (!ft_strchr(s, '\n') && size != 0)
+	while (!ft_strchr_new(s, '\n') && size != 0)
 	{
 		size = read(fd, temp, 10);
 		if (size == -1)
@@ -35,7 +33,7 @@ char	*ft_w16(char *s, int fd)
 			return (NULL);
 		}
 		temp[size] = '\0';
-		s = ft_strjoin(s, temp);
+		s = ft_strjoin_new(s, temp);
 	}
 	free (temp);
 	return (s);
@@ -44,7 +42,7 @@ char	*ft_w16(char *s, int fd)
 char	*get_next_line(int fd, int z)
 {
 	char		*d;
-	static char *s;
+	static char	*s;
 
 	d = NULL;
 	if (fd < 0)

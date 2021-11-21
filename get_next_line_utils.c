@@ -6,13 +6,13 @@
 /*   By: ahhammou <ahhammou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/19 11:31:05 by ahhammou          #+#    #+#             */
-/*   Updated: 2021/10/29 19:16:15 by ahhammou         ###   ########.fr       */
+/*   Updated: 2021/11/15 09:00:34 by ahhammou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int	ft_strlen(char *s)
+int	ft_strlen_new(char *s)
 {
 	int	i;
 
@@ -22,7 +22,7 @@ int	ft_strlen(char *s)
 	return (i);
 }
 
-char	*ft_strjoin(char *s1, char *s2)
+char	*ft_strjoin_new(char *s1, char *s2)
 {
 	char	*str;
 	int		i;
@@ -35,7 +35,8 @@ char	*ft_strjoin(char *s1, char *s2)
 		s1 = (char *)malloc(sizeof(char) * 1);
 		s1[0] = '\0';
 	}
-	str = (char *)malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 1));
+	str = (char *)malloc(sizeof(char) * (ft_strlen_new(s1) + \
+		ft_strlen_new(s2) + 1));
 	if (!str)
 		return (NULL);
 	while (s1[j] != '\0')
@@ -48,7 +49,7 @@ char	*ft_strjoin(char *s1, char *s2)
 	return (str);
 }
 
-char	*ft_strchr(char *src, int c)
+char	*ft_strchr_new(char *src, int c)
 {
 	int	i;
 
@@ -108,7 +109,7 @@ char	*ft_future_line(char *s)
 		free (s);
 		return (NULL);
 	}
-	str = (char *)malloc(sizeof(char) * (ft_strlen(s) - i + 1));
+	str = (char *)malloc(sizeof(char) * (ft_strlen_new(s) - i + 1));
 	if (!str)
 		return (NULL);
 	i++;
